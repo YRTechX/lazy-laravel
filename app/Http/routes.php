@@ -1,25 +1,27 @@
 <?php
 
-use App\Task;
+use App\Products;
 use Illuminate\Http\Request;
 
 /**
  * Вывести панель с задачами
  */
 Route::get('/', function () {
-    $tasks = Task::orderBy('created_at', 'asc')->get();
-    return view('tasks',[
-	'tasks'=> $tasks,
-	'title'=>'all tasks',
+    $products = Products::orderBy('id', 'asc')->get();
+    return view('products', [
+	'products' => $products,
+	'title' => 'all products',
     ]);
 });
 
 /**
  * Добавить новую задачу
  */
-Route::post('/task', function (Request $request) {
+Route::post('/products', function (Request $request) {
     $validator = Validator::make($request->all(), [
 		'name' => 'required|max:255',
+		'description' => 'required|max:255',
+		'price' => 'required|max:255',
     ]);
 
     if ($validator->fails()) {
@@ -27,17 +29,20 @@ Route::post('/task', function (Request $request) {
 			->withInput()
 			->withErrors($validator);
     }
-    $task = new Task;
-  $task->name = $request->name;
-  $task->save();
+    $products = new Products;
+    $products->name = $request->name;
+    $products->description = $request->description;
+    $products->price = $request->price;
+    $products->save();
 
-  return redirect('/');
+    return redirect('/');
 });
 
 /**
  * Удалить задачу
  */
-Route::delete('/task/{task}', function (Task $task) {
-$task->delete();
+Route::delete('/products/{product}', function (Products $product) {
+    $product->delete();
 
-  return redirect('/');});
+    return redirect('/');
+});
